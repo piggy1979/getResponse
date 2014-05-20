@@ -29,23 +29,23 @@ class Get_Response{
 	}
 
 	public function pushGetResponse(){
-			$this->options[api_key] 		= get_option('impact_getresponse_api_key');
-			$this->options[shared_secret]	= get_option('impact_getresponse_shared_secret');
-			$this->options[api_url]			= get_option('impact_getresponse_api_url');
-			$this->options[grp]				= get_option('impact_getresponse_grp');	
-			$this->options[email]			= $this->_clean($_REQUEST['email']);
-			$this->options[firstname]		= $this->_clean($_REQUEST['firstname']);
-			$this->options[lastname]		= $this->_clean($_REQUEST['lastname']);
+			$this->options['api_key'] 		= get_option('impact_getresponse_api_key');
+			$this->options['shared_secret']	= get_option('impact_getresponse_shared_secret');
+			$this->options['api_url']			= get_option('impact_getresponse_api_url');
+			$this->options['grp']				= get_option('impact_getresponse_grp');	
+			$this->options['email']			= $this->_clean($_REQUEST['email']);
+			$this->options['firstname']		= $this->_clean($_REQUEST['firstname']);
+			$this->options['lastname']		= $this->_clean($_REQUEST['lastname']);
 
 
-			if (!filter_var($this->options[email], FILTER_VALIDATE_EMAIL)) {
+			if (!filter_var($this->options['email'], FILTER_VALIDATE_EMAIL)) {
 				return false;
 			}
 
-			$xmlblock = "<api><authentication><api_key>".$this->options[api_key]."</api_key><shared_secret>".$this->options[shared_secret]."</shared_secret><response_type>xml</response_type></authentication><data><methodCall><methodName>legacy.manage_subscriber</methodName><grp>".$this->options[grp]."</grp><email>".$this->options[email]."</email><firstname>".$this->options[firstname]."</firstname><lastname>".$this->options[lastname]."</lastname></methodCall></data></api>";
+			$xmlblock = "<api><authentication><api_key>".$this->options[api_key]."</api_key><shared_secret>".$this->options['shared_secret']."</shared_secret><response_type>xml</response_type></authentication><data><methodCall><methodName>legacy.manage_subscriber</methodName><grp>".$this->options[grp]."</grp><email>".$this->options[email]."</email><firstname>".$this->options[firstname]."</firstname><lastname>".$this->options[lastname]."</lastname></methodCall></data></api>";
 
 			$headers[] = 'Content-Type: application/x-www-form-urlencoded';
-			$curl = curl_init($this->options[api_url]);
+			$curl = curl_init($this->options['api_url']);
     		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
    			curl_setopt($curl, CURLOPT_POST, true);
     		curl_setopt($curl, CURLOPT_POSTFIELDS, "data=".$xmlblock);
@@ -62,7 +62,7 @@ class Get_Response{
     		xml_parse_into_struct($p, $curl_response, $xmlvals, $xmlindex);
 			xml_parser_free($p);
 		//	print_r($xmlindex);
-			if($xmlindex[ERROR]){
+			if($xmlindex['ERROR']){
 				return false;
 			}else{
 				return true;
@@ -78,7 +78,7 @@ class Get_Response{
     			// This nonce is not valid.
     			die( 'Security check' ); 
 			} else {
-				if($this->pushBluehornet()){
+				if($this->pushgetresponse()){
 					echo "<h2>Successfully Added</h2>\n";
 					echo "<p>You have been successfully added to our mailing list. Thank you!</p>\n";
 				}else{
@@ -101,7 +101,7 @@ class Get_Response{
 		$nonce = wp_create_nonce( 'impact-custom-7389' );
 		?>
 		
-		<form action="/newsletter" method="post" class="bluehornet formelement">
+		<form action="/newsletter" method="post" class="getresponse formelement">
 			<div class="gform_body">
 			<h2 class="legend"><span>Personalize Your Account</span></h2>
 			<fieldset>
@@ -120,11 +120,11 @@ class Get_Response{
 		
 	}
 
-	public function createBluehornetMiniForm()
+	public function creategetresponseMiniForm()
 	{
 	$nonce = wp_create_nonce( 'impact-custom-7389' );
 	?>
-		<form action="/newsletter" method="post" class="bluehornetmini span4">
+		<form action="/newsletter" method="post" class="getresponsemini span4">
 			<div>
 			<input type="hidden" name="verifyid" value="<?php echo $nonce; ?>">
 			<input class="input" type="text" name="email" value="" placeholder="Enter Email Address for Updates">
@@ -137,10 +137,10 @@ class Get_Response{
 
 	public function init_options(){
 
-		add_options_page( 'Blue Hornet Settings', 'Blue Hornet Settings', 'manage_options', 'bluehornet_options', array($this, 'verb_bluehornet_options') );
+		add_options_page( 'Get Response Settings', 'Get Response Settings', 'manage_options', 'getresponse_options', array($this, 'impact_getresponse_options') );
 	}
 
-	public function verb_bluehornet_options()
+	public function impact_getresponse_options()
 	{
 		if(!current_user_can('manage_options'))
 		{
@@ -153,13 +153,13 @@ class Get_Response{
 			
 		<div class="wrap">
 			<?php screen_icon(); ?>
-			<h2>Blue Hornet Settings</h2>
+			<h2>Get Response</h2>
 
 			<form method="post" action="options.php">
 			<?php
-				@settings_fields('verb_bluehornet_group');
-				@do_settings_fields('verb_bluehornet_group');
-				do_settings_sections('bluehornet_options');
+				@settings_fields('impact_getresponse_group');
+				@do_settings_fields('impact_getresponse_group');
+				do_settings_sections('getresponse_options');
 				@submit_button();
 			?>
 			</form>
@@ -173,49 +173,49 @@ class Get_Response{
 
 	public function page_init()
 	{
-		register_setting('verb_bluehornet_group', 'verb_bluehornet_api_key');
-		register_setting('verb_bluehornet_group', 'verb_bluehornet_shared_secret');
-		register_setting('verb_bluehornet_group', 'verb_bluehornet_api_url');
-		register_setting('verb_bluehornet_group', 'verb_bluehornet_grp');
+		register_setting('impact_getresponse_group', 'impact_getresponse_api_key');
+		register_setting('impact_getresponse_group', 'impact_getresponse_shared_secret');
+		register_setting('impact_getresponse_group', 'impact_getresponse_api_url');
+		register_setting('impact_getresponse_group', 'impact_getresponse_grp');
 
 		add_settings_section(
-			'verb_bluehornet-section',
-			'Bluehornet Settings',
-			array($this, 'verb_bluehornet_formheader'),
-			'bluehornet_options'
+			'impact_getresponse-section',
+			'getresponse Settings',
+			array($this, 'impact_getresponse_formheader'),
+			'getresponse_options'
 		);
         add_settings_field(
-            'verb_bluehornet_api_key-setting', // ID
+            'impact_getresponse_api_key-setting', // ID
             'API Key', // Title 
             array( $this, 'output_api_key' ), // Callback
-            'bluehornet_options', // Page
-            'verb_bluehornet-section' // Section           
+            'getresponse_options', // Page
+            'impact_getresponse-section' // Section           
         ); 
         add_settings_field(
-        	'verb_bluehornet_shared_secret-setting',
+        	'impact_getresponse_shared_secret-setting',
         	'Shared Secret',
         	array($this, 'output_shared_key'),
-        	'bluehornet_options',
-        	'verb_bluehornet-section'
+        	'getresponse_options',
+        	'impact_getresponse-section'
         );
         add_settings_field(
-            'verb_bluehornet_api_url-setting', // ID
+            'impact_getresponse_api_url-setting', // ID
             'API URL', // Title 
             array( $this, 'output_api_url' ), // Callback
-            'bluehornet_options', // Page
-            'verb_bluehornet-section' // Section           
+            'getresponse_options', // Page
+            'impact_getresponse-section' // Section           
         ); 
         add_settings_field(
-            'verb_bluehornet_grp-setting', // ID
+            'impact_getresponse_grp-setting', // ID
             'Group ID', // Title 
             array( $this, 'output_grp' ), // Callback
-            'bluehornet_options', // Page
-            'verb_bluehornet-section' // Section           
+            'getresponse_options', // Page
+            'impact_getresponse-section' // Section           
         ); 
 
 
 	}
-	public function verb_bluehornet_formheader()
+	public function impact_getresponse_formheader()
 	{
 		echo "Enter your Blue Hornet details here.";
 	}
@@ -223,23 +223,23 @@ class Get_Response{
 	/* will group these in next interation so its just one method */
 	public function output_api_key()
 	{
-		$value = get_option('verb_bluehornet_api_key');
-		printf('<input type="text" id="api_key" class="regular-text" name="verb_bluehornet_api_key" value="%s" />', $value);
+		$value = get_option('impact_getresponse_api_key');
+		printf('<input type="text" id="api_key" class="regular-text" name="impact_getresponse_api_key" value="%s" />', $value);
 	}
 	public function output_shared_key()
 	{
-		$value = get_option('verb_bluehornet_shared_secret');
-		printf('<input type="text" id="shared_secret" class="regular-text" name="verb_bluehornet_shared_secret" value="%s" />', $value);
+		$value = get_option('impact_getresponse_shared_secret');
+		printf('<input type="text" id="shared_secret" class="regular-text" name="impact_getresponse_shared_secret" value="%s" />', $value);
 	}
 		public function output_api_url()
 	{
-		$value = get_option('verb_bluehornet_api_url');
-		printf('<input type="text" id="api_url" class="regular-text" name="verb_bluehornet_api_url" value="%s" />', $value);
+		$value = get_option('impact_getresponse_api_url');
+		printf('<input type="text" id="api_url" class="regular-text" name="impact_getresponse_api_url" value="%s" />', $value);
 	}
 		public function output_grp()
 	{
-		$value = get_option('verb_bluehornet_grp');
-		printf('<input type="text" id="api_grp" class="regular-text" name="verb_bluehornet_grp" value="%s" />', $value);
+		$value = get_option('impact_getresponse_grp');
+		printf('<input type="text" id="api_grp" class="regular-text" name="impact_getresponse_grp" value="%s" />', $value);
 	}
 
 
@@ -262,25 +262,25 @@ class Get_Response{
 
 } // end if class exists
 
-if(class_exists('Verb_Bluehornet'))
+if(class_exists('impact_getresponse'))
 {
-	register_activation_hook(__FILE__, array('Verb_Bluehornet', 'activate') );
-	register_deactivation_hook( __FILE__, array('Verb_Bluehornet', 'deactivate') );
-	$verb_bluehornet = new Verb_Bluehornet();
+	register_activation_hook(__FILE__, array('impact_getresponse', 'activate') );
+	register_deactivation_hook( __FILE__, array('impact_getresponse', 'deactivate') );
+	$impact_getresponse = new impact_getresponse();
 
 
 	// add link to settings on the plugin page.
 	//
-	if(isset($verb_bluehornet))
+	if(isset($impact_getresponse))
 	{
-		function bluehornet_settings_link($links)
+		function getresponse_settings_link($links)
 		{
-			$settings_link = '<a href="options-general.php?page=bluehornet_options">Settings</a>';
+			$settings_link = '<a href="options-general.php?page=getresponse_options">Settings</a>';
 			array_unshift($links, $settings_link);
 			return $links;
 		}
 		$plugin = plugin_basename(__FILE__);
-		add_filter("plugin_action_links_{$plugin}", 'bluehornet_settings_link');
+		add_filter("plugin_action_links_{$plugin}", 'getresponse_settings_link');
 
 	}
 }
