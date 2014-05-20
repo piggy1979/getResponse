@@ -1,19 +1,19 @@
 <?php
 
 /*
-Plugin Name: Verb Blue Hornet Mailing System
-Plugin URI: http://verbinteractive.com
-Description: Setup Default Settings for Blue Hornet.
+Plugin Name: Get Response Mailer Subscribe
+Plugin URI: http://makeone.ca
+Description: Setup Default Settings for Get Response.
 Author: Phil Neal
-Author URI: http://verbinteractive.com
+Author URI: http://makeone.ca
 Version: 1.0
 */
 
 
-if(!class_exists('Verb_Bluehornet'))
+if(!class_exists('Get_Response'))
 {
 
-class Verb_Bluehornet{
+class Get_Response{
 	
 
 	public $options;
@@ -28,11 +28,11 @@ class Verb_Bluehornet{
 	//	add_action('init', array($this, 'pushMobilecon'));
 	}
 
-	public function pushBluehornet(){
-			$this->options[api_key] 		= get_option('verb_bluehornet_api_key');
-			$this->options[shared_secret]	= get_option('verb_bluehornet_shared_secret');
-			$this->options[api_url]			= get_option('verb_bluehornet_api_url');
-			$this->options[grp]				= get_option('verb_bluehornet_grp');	
+	public function pushGetResponse(){
+			$this->options[api_key] 		= get_option('impact_getresponse_api_key');
+			$this->options[shared_secret]	= get_option('impact_getresponse_shared_secret');
+			$this->options[api_url]			= get_option('impact_getresponse_api_url');
+			$this->options[grp]				= get_option('impact_getresponse_grp');	
 			$this->options[email]			= $this->_clean($_REQUEST['email']);
 			$this->options[firstname]		= $this->_clean($_REQUEST['firstname']);
 			$this->options[lastname]		= $this->_clean($_REQUEST['lastname']);
@@ -42,11 +42,9 @@ class Verb_Bluehornet{
 				return false;
 			}
 
-
 			$xmlblock = "<api><authentication><api_key>".$this->options[api_key]."</api_key><shared_secret>".$this->options[shared_secret]."</shared_secret><response_type>xml</response_type></authentication><data><methodCall><methodName>legacy.manage_subscriber</methodName><grp>".$this->options[grp]."</grp><email>".$this->options[email]."</email><firstname>".$this->options[firstname]."</firstname><lastname>".$this->options[lastname]."</lastname></methodCall></data></api>";
 
 			$headers[] = 'Content-Type: application/x-www-form-urlencoded';
-		//	$headers[] = 'Content-Type: text/xml;charset=utf-8';
 			$curl = curl_init($this->options[api_url]);
     		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
    			curl_setopt($curl, CURLOPT_POST, true);
@@ -57,12 +55,9 @@ class Verb_Bluehornet{
     		curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 30);                             
       		$curl_response = curl_exec($curl);
 
-		//	print_r(curl_getinfo($curl));
 
     		curl_close($curl);
-    	//	print_r(curl_error($curl));
-		//	print_r($curl_response);
-    	//	$curl_response = "".$xmlblock."";
+
     		$p = xml_parser_create();
     		xml_parse_into_struct($p, $curl_response, $xmlvals, $xmlindex);
 			xml_parser_free($p);
@@ -75,11 +70,11 @@ class Verb_Bluehornet{
 
 	}
 
-	public function createBluehornetForm(){
+	public function createGetResponseForm(){
 
 		if($_POST['verifyid']){
 			$nonce = $_REQUEST['verifyid'];
-			if ( ! wp_verify_nonce( $nonce, 'verb-custom-7389' ) ) {
+			if ( ! wp_verify_nonce( $nonce, 'impact-custom-7389' ) ) {
     			// This nonce is not valid.
     			die( 'Security check' ); 
 			} else {
@@ -103,7 +98,7 @@ class Verb_Bluehornet{
 			return;
 		}
 
-		$nonce = wp_create_nonce( 'verb-custom-7389' );
+		$nonce = wp_create_nonce( 'impact-custom-7389' );
 		?>
 		
 		<form action="/newsletter" method="post" class="bluehornet formelement">
@@ -127,7 +122,7 @@ class Verb_Bluehornet{
 
 	public function createBluehornetMiniForm()
 	{
-	$nonce = wp_create_nonce( 'verb-custom-7389' );
+	$nonce = wp_create_nonce( 'impact-custom-7389' );
 	?>
 		<form action="/newsletter" method="post" class="bluehornetmini span4">
 			<div>
