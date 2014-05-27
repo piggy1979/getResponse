@@ -12,6 +12,7 @@ Version: 1.0
 
 if(!class_exists('Impact_Get_Response'))
 {
+require_once 'jsonRPCClient.php';
 
 class Impact_Get_Response{
 	
@@ -30,7 +31,7 @@ class Impact_Get_Response{
 
 	public function pushGetResponse(){
 			$this->options['api_key'] 		= get_option('impact_getresponse_api_key');
-			$this->options['shared_secret']	= get_option('impact_getresponse_shared_secret');
+		/*	$this->options['shared_secret']	= get_option('impact_getresponse_shared_secret'); */
 			$this->options['api_url']		= get_option('impact_getresponse_api_url');
 			$this->options['grp']			= get_option('impact_getresponse_grp');	
 			$this->options['email']			= $this->_clean($_REQUEST['email']);
@@ -42,31 +43,35 @@ class Impact_Get_Response{
 				return false;
 			}
 
-			$xmlblock = "<api><authentication><api_key>".$this->options['api_key']."</api_key><shared_secret>".$this->options['shared_secret']."</shared_secret><response_type>xml</response_type></authentication><data><methodCall><methodName>legacy.manage_subscriber</methodName><grp>".$this->options[grp]."</grp><email>".$this->options[email]."</email><firstname>".$this->options[firstname]."</firstname><lastname>".$this->options[lastname]."</lastname></methodCall></data></api>";
-
-			$headers[] = 'Content-Type: application/x-www-form-urlencoded';
-			$curl = curl_init($this->options['api_url']);
-    		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-   			curl_setopt($curl, CURLOPT_POST, true);
-    		curl_setopt($curl, CURLOPT_POSTFIELDS, "data=".$xmlblock);
-    		curl_setopt($curl, CURLOPT_HTTPHEADER, array($headers));
-    		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-    		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
-    		curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 30);                             
-      		$curl_response = curl_exec($curl);
 
 
-    		curl_close($curl);
 
-    		$p = xml_parser_create();
-    		xml_parse_into_struct($p, $curl_response, $xmlvals, $xmlindex);
-			xml_parser_free($p);
-		//	print_r($xmlindex);
-			if($xmlindex['ERROR']){
-				return false;
-			}else{
-				return true;
-			}
+
+		// 	$xmlblock = "<api><authentication><api_key>".$this->options['api_key']."</api_key><shared_secret>".$this->options['shared_secret']."</shared_secret><response_type>xml</response_type></authentication><data><methodCall><methodName>legacy.manage_subscriber</methodName><grp>".$this->options[grp]."</grp><email>".$this->options[email]."</email><firstname>".$this->options[firstname]."</firstname><lastname>".$this->options[lastname]."</lastname></methodCall></data></api>";
+
+		// 	$headers[] = 'Content-Type: application/x-www-form-urlencoded';
+		// 	$curl = curl_init($this->options['api_url']);
+  //   		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+  //  			curl_setopt($curl, CURLOPT_POST, true);
+  //   		curl_setopt($curl, CURLOPT_POSTFIELDS, "data=".$xmlblock);
+  //   		curl_setopt($curl, CURLOPT_HTTPHEADER, array($headers));
+  //   		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+  //   		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+  //   		curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 30);                             
+  //     		$curl_response = curl_exec($curl);
+
+
+  //   		curl_close($curl);
+
+  //   		$p = xml_parser_create();
+  //   		xml_parse_into_struct($p, $curl_response, $xmlvals, $xmlindex);
+		// 	xml_parser_free($p);
+		// //	print_r($xmlindex);
+		// 	if($xmlindex['ERROR']){
+		// 		return false;
+		// 	}else{
+		// 		return true;
+		// 	}
 
 	}
 
@@ -101,11 +106,10 @@ class Impact_Get_Response{
 		$nonce = wp_create_nonce( 'impact-custom-7389' );
 		?>
 		
-		<form action="/newsletter" method="post" class="getresponse formelement">
+		<form action="/newsletter" id="emailform" method="post" class="getresponse formelement">
 			<div class="gform_body">
-			<h2 class="legend"><span>Personalize Your Account</span></h2>
+			<h3>Personalize Your Account</h3>
 			<fieldset>
-				<p>Get access to exclusive content, free resources, research and so much more!</p>
 			<ul>
 			<li class="gfield gform-name"><input type="hidden" name="verifyid" value="<?php echo $nonce; ?>">
 			<label class="gfield_label">First Name<span class="gfield_required">*</span></label><input class="input short" type="text" name="firstname" value="<?php echo $_POST['firstname'] ?>" placeholder="First Name"></li>
@@ -124,12 +128,11 @@ class Impact_Get_Response{
 	{
 	$nonce = wp_create_nonce( 'impact-custom-7389' );
 	?>
-		<form action="/newsletter" method="post" class="getresponsemini span4">
-			<div>
+		<form action="/newsletter" method="post" class="col-sm-5 getresponsemini span4">
+			<h3>Get Email Updates</h3>
 			<input type="hidden" name="verifyid" value="<?php echo $nonce; ?>">
-			<input class="input" type="text" name="email" value="" placeholder="Enter Email Address for Updates">
-			<input class="submit" type="submit" name="submit" value="Submit">	
-		</div>
+			<input class="input" type="text" name="email" value="" placeholder="Your Email">
+			<input class="submit" type="submit" name="submit" value="Go">	
 		</form>
 	<?php
 	}
