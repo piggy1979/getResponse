@@ -10,10 +10,10 @@ Version: 1.0
 */
 
 
-if(!class_exists('Get_Response'))
+if(!class_exists('Impact_Get_Response'))
 {
 
-class Get_Response{
+class Impact_Get_Response{
 	
 
 	public $options;
@@ -25,14 +25,14 @@ class Get_Response{
 		add_action('admin_menu', array($this, 'init_options'));
 		// create admin page.
 		add_action( 'admin_init', array( $this, 'page_init' ) );
-	//	add_action('init', array($this, 'pushMobilecon'));
+	
 	}
 
 	public function pushGetResponse(){
 			$this->options['api_key'] 		= get_option('impact_getresponse_api_key');
 			$this->options['shared_secret']	= get_option('impact_getresponse_shared_secret');
-			$this->options['api_url']			= get_option('impact_getresponse_api_url');
-			$this->options['grp']				= get_option('impact_getresponse_grp');	
+			$this->options['api_url']		= get_option('impact_getresponse_api_url');
+			$this->options['grp']			= get_option('impact_getresponse_grp');	
 			$this->options['email']			= $this->_clean($_REQUEST['email']);
 			$this->options['firstname']		= $this->_clean($_REQUEST['firstname']);
 			$this->options['lastname']		= $this->_clean($_REQUEST['lastname']);
@@ -42,7 +42,7 @@ class Get_Response{
 				return false;
 			}
 
-			$xmlblock = "<api><authentication><api_key>".$this->options[api_key]."</api_key><shared_secret>".$this->options['shared_secret']."</shared_secret><response_type>xml</response_type></authentication><data><methodCall><methodName>legacy.manage_subscriber</methodName><grp>".$this->options[grp]."</grp><email>".$this->options[email]."</email><firstname>".$this->options[firstname]."</firstname><lastname>".$this->options[lastname]."</lastname></methodCall></data></api>";
+			$xmlblock = "<api><authentication><api_key>".$this->options['api_key']."</api_key><shared_secret>".$this->options['shared_secret']."</shared_secret><response_type>xml</response_type></authentication><data><methodCall><methodName>legacy.manage_subscriber</methodName><grp>".$this->options[grp]."</grp><email>".$this->options[email]."</email><firstname>".$this->options[firstname]."</firstname><lastname>".$this->options[lastname]."</lastname></methodCall></data></api>";
 
 			$headers[] = 'Content-Type: application/x-www-form-urlencoded';
 			$curl = curl_init($this->options['api_url']);
@@ -134,7 +134,6 @@ class Get_Response{
 	<?php
 	}
 
-
 	public function init_options(){
 
 		add_options_page( 'Get Response Settings', 'Get Response Settings', 'manage_options', 'getresponse_options', array($this, 'impact_getresponse_options') );
@@ -165,9 +164,7 @@ class Get_Response{
 			</form>
 		</div>
 		<?php
-
 	}
-
 
 	/* settings page */
 
@@ -180,7 +177,7 @@ class Get_Response{
 
 		add_settings_section(
 			'impact_getresponse-section',
-			'getresponse Settings',
+			'<h3>API Details</h3>',
 			array($this, 'impact_getresponse_formheader'),
 			'getresponse_options'
 		);
@@ -217,7 +214,7 @@ class Get_Response{
 	}
 	public function impact_getresponse_formheader()
 	{
-		echo "Enter your Blue Hornet details here.";
+		echo "Enter your <strong>Get Response</strong> details here.";
 	}
 
 	/* will group these in next interation so its just one method */
@@ -231,12 +228,12 @@ class Get_Response{
 		$value = get_option('impact_getresponse_shared_secret');
 		printf('<input type="text" id="shared_secret" class="regular-text" name="impact_getresponse_shared_secret" value="%s" />', $value);
 	}
-		public function output_api_url()
+	public function output_api_url()
 	{
 		$value = get_option('impact_getresponse_api_url');
 		printf('<input type="text" id="api_url" class="regular-text" name="impact_getresponse_api_url" value="%s" />', $value);
 	}
-		public function output_grp()
+	public function output_grp()
 	{
 		$value = get_option('impact_getresponse_grp');
 		printf('<input type="text" id="api_grp" class="regular-text" name="impact_getresponse_grp" value="%s" />', $value);
@@ -253,7 +250,6 @@ class Get_Response{
 
 	}
 
-
 	public function _clean($str){ 
     	return is_array($str) ? array_map('_clean', $str) : str_replace("\\", "\\\\", htmlspecialchars((get_magic_quotes_gpc() ? stripslashes($str) : $str), ENT_QUOTES)); 
 	}
@@ -262,15 +258,13 @@ class Get_Response{
 
 } // end if class exists
 
-if(class_exists('impact_getresponse'))
+if(class_exists('Impact_Get_Response'))
 {
 	register_activation_hook(__FILE__, array('impact_getresponse', 'activate') );
 	register_deactivation_hook( __FILE__, array('impact_getresponse', 'deactivate') );
-	$impact_getresponse = new impact_getresponse();
-
+	$impact_getresponse = new impact_get_response();
 
 	// add link to settings on the plugin page.
-	//
 	if(isset($impact_getresponse))
 	{
 		function getresponse_settings_link($links)
@@ -281,9 +275,7 @@ if(class_exists('impact_getresponse'))
 		}
 		$plugin = plugin_basename(__FILE__);
 		add_filter("plugin_action_links_{$plugin}", 'getresponse_settings_link');
-
 	}
 }
-
 
 #EOF
