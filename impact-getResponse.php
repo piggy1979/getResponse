@@ -43,36 +43,22 @@ class Impact_Get_Response{
 				return false;
 			}
 
+			$client = new jsonRPCClient($this->options['api_url']);
 
 
+//			$campaigns = $client->get_campaigns($this->options['api_key']);
+
+			$adduser = $client->add_contact($this->options['api_key'],
+					array(
+						'campaign' => "ni0z",
+						'name' => $this->options['firstname'] . " " . $this->options['lastname'],
+						'email' => $this->options['email']
+					)
+				);
 
 
-		// 	$xmlblock = "<api><authentication><api_key>".$this->options['api_key']."</api_key><shared_secret>".$this->options['shared_secret']."</shared_secret><response_type>xml</response_type></authentication><data><methodCall><methodName>legacy.manage_subscriber</methodName><grp>".$this->options[grp]."</grp><email>".$this->options[email]."</email><firstname>".$this->options[firstname]."</firstname><lastname>".$this->options[lastname]."</lastname></methodCall></data></api>";
-
-		// 	$headers[] = 'Content-Type: application/x-www-form-urlencoded';
-		// 	$curl = curl_init($this->options['api_url']);
-  //   		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-  //  			curl_setopt($curl, CURLOPT_POST, true);
-  //   		curl_setopt($curl, CURLOPT_POSTFIELDS, "data=".$xmlblock);
-  //   		curl_setopt($curl, CURLOPT_HTTPHEADER, array($headers));
-  //   		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-  //   		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
-  //   		curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 30);                             
-  //     		$curl_response = curl_exec($curl);
-
-
-  //   		curl_close($curl);
-
-  //   		$p = xml_parser_create();
-  //   		xml_parse_into_struct($p, $curl_response, $xmlvals, $xmlindex);
-		// 	xml_parser_free($p);
-		// //	print_r($xmlindex);
-		// 	if($xmlindex['ERROR']){
-		// 		return false;
-		// 	}else{
-		// 		return true;
-		// 	}
-
+			print_r($adduser);
+			return $adduser;
 	}
 
 	public function createGetResponseForm(){
@@ -106,7 +92,7 @@ class Impact_Get_Response{
 		$nonce = wp_create_nonce( 'impact-custom-7389' );
 		?>
 		
-		<form action="/newsletter" id="emailform" method="post" class="getresponse formelement">
+		<form action="/newsletter" method="post" class="getresponse formelement">
 			<div class="gform_body">
 			<h3>Personalize Your Account</h3>
 			<fieldset>
@@ -128,7 +114,7 @@ class Impact_Get_Response{
 	{
 	$nonce = wp_create_nonce( 'impact-custom-7389' );
 	?>
-		<form action="/newsletter" method="post" class="col-sm-5 getresponsemini span4">
+		<form action="/newsletter" id="emailform" method="post" class="col-sm-5 getresponsemini span4">
 			<h3>Get Email Updates</h3>
 			<input type="hidden" name="verifyid" value="<?php echo $nonce; ?>">
 			<input class="input" type="text" name="email" value="" placeholder="Your Email">
